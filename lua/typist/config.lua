@@ -1,8 +1,8 @@
 local M = {
-  grey_hl = 'TypistGrey',
-  incorrect_hl = 'TypistIncorrect',
-  correct_hl = 'TypistCorrect',
-  current_line_hl = 'TypistCurrentLine',
+  grey_hl = 'Typist.Overlay',
+  incorrect_hl = 'Typist.Incorrect',
+  correct_hl = 'Typist.Correct',
+  current_line_hl = 'Typist.CurrentLine',
 }
 
 return M
