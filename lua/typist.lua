@@ -85,10 +85,7 @@ local function update_char(correct)
   if col < #line - 1 then
     state.current_pos[2] = col + 1
   else
-    if row < #state.lines - 1 then
-      state.current_pos[1] = row + 1
-      state.current_pos[2] = 0
-    else
+    if row >= #state.lines - 1 then
       M.stop()
       return
     end
@@ -178,7 +175,8 @@ function M.start()
     if key == M.ENTER then
       local row, col = state.current_pos[1], state.current_pos[2]
       local line = state.lines[row + 1]
-      if col == #line then
+
+      if col == #line - 1 or #line == 0 then
         if row < #state.lines - 1 then
           state.current_pos[1] = row + 1
           state.current_pos[2] = 0
