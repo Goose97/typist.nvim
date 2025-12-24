@@ -123,22 +123,31 @@ local function handle_backspace()
   update_current_line_sign()
 end
 
-function M.start()
+function M.start(start_line)
   state.buf = vim.api.nvim_get_current_buf()
   state.win = vim.api.nvim_get_current_win()
   state.lines = vim.api.nvim_buf_get_lines(state.buf, 0, -1, false)
-  state.current_pos = { 0, 0 }
   state.active = true
   state.ns = vim.api.nvim_create_namespace('typist')
   state.extmark_ids = {}
   state.current_line = { index = nil, extmark_id = nil }
+
+  -- Validate and set start line
+  start_line = start_line or 0
+  if start_line < 0 then
+    start_line = 0
+  elseif start_line >= #state.lines then
+    vim.notify("Start line is beyond the end of the buffer", vim.log.levels.ERROR)
+    return
+  end
+  state.current_pos = { start_line, 0 }
 
   highlight.setup()
 
   set_grey_overlay()
 
   vim.wo[state.win].signcolumn = 'yes'
-  vim.api.nvim_win_set_cursor(state.win, { 1, 0 })
+  vim.api.nvim_win_set_cursor(state.win, { start_line + 1, 0 })
   update_current_line_sign()
 
   while state.active do
@@ -232,9 +241,10 @@ function M.stop()
 end
 
 function M.setup(opts)
-  vim.api.nvim_create_user_command('TypistStart', function()
-    M.start()
-  end, {})
+  vim.api.nvim_create_user_command('TypistStart', function(opts)
+    local line_num = opts.count > 0 and opts.count - 1 or 0
+    M.start(line_num)
+  end, { count = true })
 
   vim.api.nvim_create_user_command('TypistStop', function()
     M.stop()
