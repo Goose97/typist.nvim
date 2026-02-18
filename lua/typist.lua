@@ -242,11 +242,11 @@ function M.stop()
 	state.current_line = { index = nil, extmark_id = nil }
 end
 
-function M.setup(opts)
+function M.setup(_)
 	vim.api.nvim_create_user_command("TypistStart", function(opts)
-		local line_num = opts.count > 0 and opts.count - 1 or 0
-		M.start(line_num)
-	end, { count = true })
+		local line_num = tonumber(opts.args) or vim.api.nvim_win_get_cursor(0)[1]
+		M.start(line_num - 1)
+	end, { nargs = "?" })
 
 	vim.api.nvim_create_user_command("TypistStop", function()
 		M.stop()
